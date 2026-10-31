@@ -18,6 +18,9 @@ import com.app.plenka.ui.navigation.items
 import com.app.plenka.ui.components.AnimatedSplashScreen
 import com.app.plenka.ui.theme.PlenkaTheme
 
+import dagger.hilt.android.AndroidEntryPoint
+
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         val splashScreen = installSplashScreen()
