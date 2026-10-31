@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--
+        Палитра Plenka для XML-ресурсов (окно, сплэш, виджеты, уведомления).
+        Для Compose те же значения лежат в ui/theme/Color.kt. Меняя цвет, правьте оба файла.
+    -->
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+
+    <!-- Тёмная тема -->
+    <color name="background_dark">#FF0F1020</color>
+    <color name="surface_dark">#FF1A1B2E</color>
+    <color name="text_dark">#FFF5F5F7</color>
+    <color name="muted_dark">#FF9A9CB0</color>
+    <color name="primary_dark">#FFFFB400</color>
+    <color name="secondary_dark">#FFFF5A5F</color>
+    <color name="error_dark">#FFFF6B6B</color>
+
+    <!-- Светлая тема -->
+    <color name="background_light">#FFFAF8F5</color>
+    <color name="surface_light">#FFFFFFFF</color>
+    <color name="text_light">#FF1A1B2E</color>
+    <color name="muted_light">#FF666880</color>
+    <color name="primary_light">#FFB87500</color>
+    <color name="secondary_light">#FFE0434A</color>
+    <color name="error_light">#FFB3261E</color>
+</resources>

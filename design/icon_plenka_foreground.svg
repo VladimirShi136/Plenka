@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 108 108" width="108" height="108">
+  <!-- Adaptive icon foreground (clapperboard with P). Background layer: solid #0F1020. Cutouts use the background colour. -->
+  <g transform="translate(7.9 8.5) scale(0.18)">
+    <rect x="104" y="212" width="304" height="208" rx="32" fill="#FFB400"/>
+    <path fill="#0F1020" fill-rule="evenodd" transform="translate(-14 0)"
+          d="M216 246 H284 Q332 246 332 296 Q332 346 284 346 H250 V386 H216 Z
+             M264 276 V316 L300 296 Z"/>
+    <g transform="rotate(-10 104 196)">
+      <rect x="104" y="140" width="304" height="60" rx="16" fill="#FF5A5F"/>
+      <polygon points="171,140 205,140 181,200 147,200" fill="#0F1020"/>
+      <polygon points="251,140 285,140 261,200 227,200" fill="#0F1020"/>
+      <polygon points="331,140 365,140 341,200 307,200" fill="#0F1020"/>
+    </g>
+  </g>
+</svg>

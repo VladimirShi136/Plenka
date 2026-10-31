@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--
+        Основная тема приложения. Всё оформление делает Compose (ui/theme/Theme.kt),
+        здесь только то, что видно до первого кадра Compose: фон окна.
+        Фон тёмный всегда, чтобы не было белой вспышки при запуске, как бы ни была выбрана тема в приложении.
+    -->
+    <style name="Theme.Plenka" parent="android:Theme.Material.NoActionBar">
+        <item name="android:windowBackground">@color/background_dark</item>
+    </style>
+
+    <!-- Тема системного сплэша (Android 12+ и через androidx.core:core-splashscreen на старых) -->
+    <style name="Theme.App.Starting" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/background_dark</item>
+
+        <!-- Тот же слой, что и в иконке лаунчера: без маски адаптивной иконки, 288dp, видимый круг 192dp.
+             Размер согласован с SPLASH_BOX_SIZE в AnimatedSplashScreen.kt. -->
+        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_launcher_foreground</item>
+
+        <!-- Тема, которая применяется сразу после закрытия заставки -->
+        <item name="postSplashScreenTheme">@style/Theme.Plenka</item>
+    </style>
+</resources>

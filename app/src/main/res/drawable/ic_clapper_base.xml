@@ -1,0 +1,6 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android" android:width="200dp" android:height="200dp" android:viewportWidth="512" android:viewportHeight="512">
+  <!--  Clapperboard body: rect x="104" y="212" width="304" height="208" rx="32"  -->
+  <path android:fillColor="#FFB400" android:pathData="M136,212h240a32,32 0,0 1,32 32v144a32,32 0,0 1,-32 32H136a32,32 0,0 1,-32 -32V244a32,32 0,0 1,32 -32z"/>
+  <!--  Letter P (cut out) with play triangle. Same geometry as ic_launcher_foreground.xml  -->
+  <path android:fillColor="#0F1020" android:fillType="evenOdd" android:pathData="M202,246 H270 Q318,246 318,296 Q318,346 270,346 H236 V386 H202 Z M250,276 V316 L286,296 Z"/>
+</vector>

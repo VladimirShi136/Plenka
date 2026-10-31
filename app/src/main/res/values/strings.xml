@@ -1,0 +1,68 @@
+<resources>
+    <string name="app_name">Plenka</string>
+
+    <!-- Навигация -->
+    <string name="nav_home">Главная</string>
+    <string name="nav_search">Поиск</string>
+    <string name="nav_favorites">Избранное</string>
+    <string name="nav_free">Бесплатно</string>
+    <string name="nav_settings">Настройки</string>
+
+    <!-- Главная -->
+    <string name="section_popular">Популярное</string>
+    <string name="section_top">Топ рейтинга</string>
+    <string name="section_upcoming">Скоро в кино</string>
+    <string name="section_see_all">Все</string>
+
+    <!-- Поиск -->
+    <string name="search_hint">Название фильма или сериала</string>
+    <string name="search_start">Начните вводить название</string>
+    <string name="search_empty">Ничего не найдено</string>
+    <string name="search_clear">Очистить</string>
+
+    <!-- Карточка фильма -->
+    <string name="details_description">Описание</string>
+    <string name="details_genres">Жанры</string>
+    <string name="details_cast">В ролях</string>
+    <string name="details_year">Год</string>
+    <string name="details_rating">Рейтинг</string>
+    <string name="details_trailer">Трейлер</string>
+    <string name="details_where_to_watch">Где смотреть</string>
+    <string name="favorite_add">В избранное</string>
+    <string name="favorite_remove">Убрать из избранного</string>
+    <string name="poster_description">Постер: %1$s</string>
+
+    <!-- Избранное -->
+    <string name="favorites_empty_title">В избранном пока пусто</string>
+    <string name="favorites_empty_hint">Нажмите на сердечко в карточке фильма, и он появится здесь</string>
+
+    <!-- Бесплатный просмотр -->
+    <string name="free_title">Смотреть бесплатно</string>
+    <string name="free_subtitle">Фильмы в общественном достоянии и под свободными лицензиями</string>
+    <string name="free_license">Лицензия: %1$s</string>
+    <string name="free_authors">Авторы: %1$s</string>
+    <string name="free_continue">Продолжить просмотр</string>
+    <string name="free_play">Смотреть</string>
+
+    <!-- Настройки -->
+    <string name="settings_theme">Тема</string>
+    <string name="settings_theme_system">Как в системе</string>
+    <string name="settings_theme_light">Светлая</string>
+    <string name="settings_theme_dark">Тёмная</string>
+    <string name="settings_clear_cache">Очистить кэш</string>
+    <string name="settings_cache_cleared">Кэш очищен</string>
+    <string name="settings_about">О приложении</string>
+    <string name="settings_about_sources">Данные о фильмах: Kinopoisk API Unofficial. Бесплатные фильмы: Blender Foundation (CC BY) и Internet Archive (общественное достояние).</string>
+    <string name="settings_about_version">Версия %1$s</string>
+
+    <!-- Состояния и ошибки -->
+    <string name="loading">Загрузка…</string>
+    <string name="error_generic">Что-то пошло не так</string>
+    <string name="error_no_internet">Нет подключения к интернету</string>
+    <string name="error_retry">Повторить</string>
+    <string name="offline_mode">Показаны сохранённые данные</string>
+
+    <!-- Общее -->
+    <string name="action_back">Назад</string>
+    <string name="action_close">Закрыть</string>
+</resources>

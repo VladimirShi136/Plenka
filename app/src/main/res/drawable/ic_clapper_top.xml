@@ -1,0 +1,16 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="200dp"
+    android:height="200dp"
+    android:viewportWidth="512"
+    android:viewportHeight="512">
+  <!-- Clapper arm / top lid: rect x="104" y="140" width="304" height="60" rx="16" -->
+  <path
+      android:fillColor="#FF5A5F"
+      android:pathData="M120,140h272a16,16 0,0 1,16 16v28a16,16 0,0 1,-16 16H120a16,16 0,0 1,-16 -16v-28a16,16 0,0 1,16 -16z" />
+  <!-- Stripes on the arm -->
+  <path
+      android:fillColor="#0F1020"
+      android:pathData="M171,140 L205,140 L181,200 L147,200 Z
+             M251,140 L285,140 L261,200 L227,200 Z
+             M331,140 L365,140 L341,200 L307,200 Z" />
+</vector>
