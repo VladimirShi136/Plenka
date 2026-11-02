@@ -21,8 +21,12 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.app.plenka.domain.model.Movie
 
+/**
+ * Главная страница
+ */
 @Composable
 fun HomeScreen(
+    onMovieClick: (Int) -> Unit,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -51,7 +55,7 @@ fun HomeScreen(
                         modifier = Modifier.fillMaxSize()
                     ) {
                         items(state.movies) { movie ->
-                            MovieItemCard(movie = movie)
+                            MovieItemCard(movie = movie, onClick = { onMovieClick(movie.id) })
                         }
                     }
                 }
@@ -83,12 +87,12 @@ fun HomeScreen(
 }
 
 @Composable
-fun MovieItemCard(movie: Movie) {
+fun MovieItemCard(movie: Movie, onClick: () -> Unit) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .height(280.dp)
-            .clickable { /* TODO: Navigate to Details */ },
+            .clickable(onClick = onClick),
         shape = MaterialTheme.shapes.medium,
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
     ) {

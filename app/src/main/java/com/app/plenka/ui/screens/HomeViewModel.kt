@@ -17,6 +17,9 @@ sealed interface HomeUiState {
     data class Error(val message: String) : HomeUiState
 }
 
+/**
+ * Управление состоянием главного экрана
+ */
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val movieRepository: MovieRepository

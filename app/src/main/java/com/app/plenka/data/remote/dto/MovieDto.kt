@@ -8,6 +8,9 @@ data class MovieResponse(
     @SerializedName("items") val items: List<MovieDto>?
 )
 
+/**
+ * DTO краткое описание карточки фильма на главной странице
+ */
 data class MovieDto(
     @SerializedName("kinopoiskId") val kinopoiskId: Int?,
     @SerializedName("filmId") val filmId: Int?,

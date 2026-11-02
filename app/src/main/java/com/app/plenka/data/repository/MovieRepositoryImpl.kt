@@ -7,6 +7,9 @@ import com.app.plenka.domain.model.Movie
 import com.app.plenka.domain.repository.MovieRepository
 import javax.inject.Inject
 
+/**
+ * Реализация интерфейса репозитория
+ */
 class MovieRepositoryImpl @Inject constructor(
     private val api: KinopoiskApi
 ) : MovieRepository {
@@ -33,4 +36,14 @@ class MovieRepositoryImpl @Inject constructor(
             Result.failure(e)
         }
     }
+
+    override suspend fun getMovieDetails(filmId: Int): Result<com.app.plenka.domain.model.MovieDetails> {
+        return try {
+            val dto = api.getFilmDetails(apiKey = apiKey, filmId = filmId)
+            Result.success(dto.toDomain())
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
 }
+

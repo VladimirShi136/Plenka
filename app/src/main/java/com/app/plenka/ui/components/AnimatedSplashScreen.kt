@@ -29,6 +29,9 @@ private const val REST_ANGLE = -10f
 // 0.18 * 0.8 * 512 / 108 = 0.683 этой стороны. Здесь рисунок 512x512 => сторона бокса ≈ 197dp.
 private val SPLASH_BOX_SIZE = 197.dp
 
+/**
+ * Функция анимированного запуска сплеш-экрана
+ */
 @Composable
 fun AnimatedSplashScreen(
     onAnimationFinished: () -> Unit

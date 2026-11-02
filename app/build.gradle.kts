@@ -1,6 +1,10 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.dagger.hilt)
 }
 
 android {
@@ -16,12 +20,19 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
-        val kpApiKey = project.findProperty("KP_API_KEY") as String? ?: ""
+        val properties = Properties()
+        val localPropertiesFile = rootProject.file("local.properties")
+        if (localPropertiesFile.exists()) {
+            properties.load(localPropertiesFile.inputStream())
+        }
+        val kpApiKey = properties.getProperty("KP_API_KEY", "")
         buildConfigField("String", "KP_API_KEY", "\"$kpApiKey\"")
     }
 
     buildFeatures {
-        viewBinding = true
+        compose = true
+        buildConfig = true
+        viewBinding = true // если он вам реально нужен
     }
 
     configurations.all {
@@ -40,10 +51,6 @@ android {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
-    buildFeatures {
-        compose = true
-        buildConfig = true
-    }
 }
 
 dependencies {
@@ -58,7 +65,7 @@ dependencies {
     implementation(libs.androidx.core.splashscreen)
 
     // Compose Material Icons Extended
-    implementation("androidx.compose.material:material-icons-extended:1.6.8")
+    implementation("androidx.compose.material:material-icons-extended")
 
     // Navigation & UI
     implementation(libs.androidx.navigation.compose)
@@ -72,7 +79,12 @@ dependencies {
     // Hilt
     implementation(libs.hilt.android)
     implementation(libs.androidx.hilt.navigation.compose)
-    annotationProcessor(libs.hilt.compiler)
+    ksp(libs.hilt.compiler)
+
+    // Room
+    implementation(libs.room.runtime)
+    implementation(libs.room.ktx)
+    ksp(libs.room.compiler)
 
     testImplementation(libs.junit)
     androidTestImplementation(platform(libs.androidx.compose.bom))

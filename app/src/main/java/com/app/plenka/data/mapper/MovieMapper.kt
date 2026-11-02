@@ -3,6 +3,9 @@ package com.app.plenka.data.mapper
 import com.app.plenka.data.remote.dto.MovieDto
 import com.app.plenka.domain.model.Movie
 
+/**
+ * Функция для конвертации DTO в movie
+ */
 fun MovieDto.toDomain(): Movie {
     return Movie(
         id = this.kinopoiskId ?: this.filmId ?: 0,

@@ -20,6 +20,9 @@ import com.app.plenka.ui.theme.PlenkaTheme
 
 import dagger.hilt.android.AndroidEntryPoint
 
+/**
+ * Корневая активити всего приложения
+ */
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
