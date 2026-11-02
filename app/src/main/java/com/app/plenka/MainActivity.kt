@@ -6,7 +6,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -41,6 +41,9 @@ class MainActivity : ComponentActivity() {
                 val currentRoute = navBackStackEntry?.destination?.route
                 // Нижняя панель есть только на экранах-вкладках
                 val isTabScreen = items.any { it.route == currentRoute }
+                // Запоминаем отступы вкладок: когда панель скрывается (переход в детали),
+                // уходящая вкладка не должна «прыгать» от смены отступов
+                var tabPadding by remember { mutableStateOf(PaddingValues()) }
 
                 Box(modifier = Modifier.fillMaxSize()) {
                     Scaffold(
@@ -51,11 +54,12 @@ class MainActivity : ComponentActivity() {
                             }
                         }
                     ) { innerPadding ->
+                        if (isTabScreen) tabPadding = innerPadding
+                        // Отступы получают сами вкладки. Экран деталей работает с системными
+                        // отступами сам, чтобы постер мог уходить под статус-бар
                         PlenkaNavGraph(
                             navController = navController,
-                            // Экраны без панели (детали) сами работают с системными отступами,
-                            // чтобы постер мог уходить под статус-бар
-                            modifier = if (isTabScreen) Modifier.padding(innerPadding) else Modifier
+                            tabPadding = tabPadding
                         )
                     }
 

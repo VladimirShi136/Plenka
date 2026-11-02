@@ -26,6 +26,10 @@ sealed class Screen(val route: String) {
     data object Detail : Screen("detail/{movieId}") {
         fun createRoute(movieId: Int) = "detail/$movieId"
     }
+
+    data object VideoPlayer : Screen("video_player?url={url}") {
+        fun createRoute(url: String) = "video_player?url=${java.net.URLEncoder.encode(url, "UTF-8")}"
+    }
 }
 
 /** Пункты нижней панели в порядке отображения. */

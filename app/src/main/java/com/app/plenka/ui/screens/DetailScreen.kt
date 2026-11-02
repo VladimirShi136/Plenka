@@ -430,8 +430,12 @@ private fun FavoriteButton(
             contentAlignment = Alignment.Center
         ) {
             Icon(
-                painter = painterResource(R.drawable.ic_star),
-                contentDescription = "Избранное",
+                painter = painterResource(
+                    if (isFavorite) R.drawable.ic_nav_favorites_filled else R.drawable.ic_nav_favorites
+                ),
+                contentDescription = stringResource(
+                    if (isFavorite) R.string.favorite_remove else R.string.favorite_add
+                ),
                 tint = tint,
                 modifier = Modifier.size(22.dp)
             )

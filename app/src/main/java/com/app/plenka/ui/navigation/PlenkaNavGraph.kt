@@ -3,6 +3,8 @@ package com.app.plenka.ui.navigation
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
@@ -14,7 +16,13 @@ import com.app.plenka.ui.screens.*
  * Граф навигации Jetpack Navigation Compose, связывающий экраны между собой
  */
 @Composable
-fun PlenkaNavGraph(navController: NavHostController, modifier: Modifier = Modifier) {
+fun PlenkaNavGraph(
+    navController: NavHostController,
+    tabPadding: PaddingValues,
+    modifier: Modifier = Modifier
+) {
+    // Отступы применяются внутри каждой вкладки, а не ко всему NavHost
+    val tabModifier = Modifier.padding(tabPadding)
     val tabRoutes = items.map { it.route }
 
     NavHost(
@@ -64,29 +72,57 @@ fun PlenkaNavGraph(navController: NavHostController, modifier: Modifier = Modifi
             slideOutHorizontally(targetOffsetX = { it }, animationSpec = tween(300))
         }
     ) {
-        composable(Screen.Home.route) { 
+        composable(Screen.Home.route) {
             HomeScreen(
+                modifier = tabModifier,
                 onMovieClick = { movieId ->
                     navController.navigate(Screen.Detail.createRoute(movieId))
                 }
-            ) 
+            )
         }
-        composable(Screen.Search.route) { 
+        composable(Screen.Search.route) {
             SearchScreen(
+                modifier = tabModifier,
                 onMovieClick = { movieId ->
                     navController.navigate(Screen.Detail.createRoute(movieId))
                 }
-            ) 
+            )
         }
-        composable(Screen.Favorites.route) { 
+        composable(Screen.Favorites.route) {
             FavoritesScreen(
+                modifier = tabModifier,
                 onMovieClick = { movieId ->
                     navController.navigate(Screen.Detail.createRoute(movieId))
+                },
+                onFindMoviesClick = {
+                    navController.navigate(Screen.Search.route) {
+                        popUpTo(navController.graph.startDestinationId) { saveState = true }
+                        launchSingleTop = true
+                        restoreState = true
+                    }
                 }
-            ) 
+            )
         }
-        composable(Screen.FreeMovies.route) { FreeMoviesScreen() }
-        composable(Screen.Settings.route) { SettingsScreen() }
+        composable(Screen.FreeMovies.route) {
+            FreeMoviesScreen(
+                modifier = tabModifier,
+                onMovieClick = { videoUrl ->
+                    navController.navigate(Screen.VideoPlayer.createRoute(videoUrl))
+                }
+            )
+        }
+        composable(Screen.Settings.route) { SettingsScreen(modifier = tabModifier) }
+        composable(
+            route = Screen.VideoPlayer.route,
+            arguments = listOf(androidx.navigation.navArgument("url") { type = androidx.navigation.NavType.StringType; nullable = true; defaultValue = "" })
+        ) { backStackEntry ->
+            val encodedUrl = backStackEntry.arguments?.getString("url") ?: ""
+            val videoUrl = java.net.URLDecoder.decode(encodedUrl, "UTF-8")
+            VideoPlayerScreen(
+                videoUrl = videoUrl,
+                onBackClick = { navController.popBackStack() }
+            )
+        }
         composable(
             route = Screen.Detail.route,
             arguments = listOf(androidx.navigation.navArgument("movieId") { type = androidx.navigation.NavType.IntType })

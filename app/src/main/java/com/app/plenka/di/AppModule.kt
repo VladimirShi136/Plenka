@@ -28,7 +28,13 @@ object AppModule {
     fun provideOkHttpClient(): OkHttpClient {
         return OkHttpClient.Builder()
             .addInterceptor(HttpLoggingInterceptor().apply {
-                level = HttpLoggingInterceptor.Level.BODY
+                // BODY пишет в Logcat и заголовки, в том числе X-API-KEY. Только BASIC и только в debug
+                level = if (com.app.plenka.BuildConfig.DEBUG) {
+                    HttpLoggingInterceptor.Level.BASIC
+                } else {
+                    HttpLoggingInterceptor.Level.NONE
+                }
+                redactHeader("X-API-KEY")
             })
             .build()
     }

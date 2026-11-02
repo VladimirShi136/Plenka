@@ -32,7 +32,6 @@ android {
     buildFeatures {
         compose = true
         buildConfig = true
-        viewBinding = true // если он вам реально нужен
     }
 
     configurations.all {
@@ -64,9 +63,6 @@ dependencies {
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.core.splashscreen)
 
-    // Compose Material Icons Extended
-    implementation("androidx.compose.material:material-icons-extended")
-
     // Navigation & UI
     implementation(libs.androidx.navigation.compose)
     implementation(libs.coil.compose)
@@ -85,6 +81,10 @@ dependencies {
     implementation(libs.room.runtime)
     implementation(libs.room.ktx)
     ksp(libs.room.compiler)
+
+    // Media3 ExoPlayer
+    implementation(libs.media3.exoplayer)
+    implementation(libs.media3.ui)
 
     testImplementation(libs.junit)
     androidTestImplementation(platform(libs.androidx.compose.bom))

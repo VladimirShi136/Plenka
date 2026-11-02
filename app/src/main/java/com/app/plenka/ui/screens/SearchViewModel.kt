@@ -32,9 +32,11 @@ class SearchViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             _searchQuery
-                .debounce(400)
+                // Пустой запрос обрабатывается сразу (и отменяет идущий поиск), остальные ждут 400 мс
+                .debounce { if (it.isBlank()) 0L else 400L }
                 .distinctUntilChanged()
-                .collect { query ->
+                // collectLatest отменяет устаревший запрос, когда пришёл новый текст
+                .collectLatest { query ->
                     if (query.trim().length < 2) {
                         _uiState.value = SearchUiState.Idle
                     } else {
@@ -46,23 +48,26 @@ class SearchViewModel @Inject constructor(
 
     fun onQueryChanged(query: String) {
         _searchQuery.value = query
-        if (query.trim().isEmpty()) {
-            _uiState.value = SearchUiState.Idle
+    }
+
+    /** Повторить последний запрос после ошибки. */
+    fun retry() {
+        val query = _searchQuery.value.trim()
+        if (query.length >= 2) {
+            viewModelScope.launch { performSearch(query) }
         }
     }
 
-    private fun performSearch(query: String) {
-        viewModelScope.launch {
-            _uiState.value = SearchUiState.Loading
-            val result = movieRepository.searchMovies(keyword = query, page = 1)
-            result.fold(
-                onSuccess = { movies ->
-                    _uiState.value = SearchUiState.Success(movies)
-                },
-                onFailure = { error ->
-                    _uiState.value = SearchUiState.Error(error.localizedMessage ?: "Ошибка поиска")
-                }
-            )
-        }
+    private suspend fun performSearch(query: String) {
+        _uiState.value = SearchUiState.Loading
+        val result = movieRepository.searchMovies(keyword = query, page = 1)
+        result.fold(
+            onSuccess = { movies ->
+                _uiState.value = SearchUiState.Success(movies)
+            },
+            onFailure = { error ->
+                _uiState.value = SearchUiState.Error(error.localizedMessage ?: "Ошибка поиска")
+            }
+        )
     }
 }

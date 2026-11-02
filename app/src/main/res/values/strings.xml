@@ -19,6 +19,21 @@
     <string name="search_start">Начните вводить название</string>
     <string name="search_empty">Ничего не найдено</string>
     <string name="search_clear">Очистить</string>
+    <string name="search_start_hint">Минимум 2 символа. Или попробуйте:</string>
+    <string name="search_empty_hint">Проверьте написание или попробуйте другое название</string>
+    <string name="search_results_count">Найдено: %1$d</string>
+    <string-array name="search_suggestions">
+        <item>Матрица</item>
+        <item>Интерстеллар</item>
+        <item>Побег из Шоушенка</item>
+        <item>Брат</item>
+        <item>Начало</item>
+        <item>Бойцовский клуб</item>
+    </string-array>
+    <string name="home_empty">Список фильмов пуст</string>
+    <string name="favorites_find">Найти фильм</string>
+    <string name="favorites_count">В избранном: %1$d</string>
+    <string name="placeholder_soon">Скоро здесь появится</string>
 
     <!-- Карточка фильма -->
     <string name="details_description">Описание</string>
@@ -40,7 +55,7 @@
 
     <!-- Избранное -->
     <string name="favorites_empty_title">В избранном пока пусто</string>
-    <string name="favorites_empty_hint">Нажмите на сердечко в карточке фильма, и он появится здесь</string>
+    <string name="favorites_empty_hint">Нажмите на сердечко на странице фильма, и он появится здесь</string>
 
     <!-- Бесплатный просмотр -->
     <string name="free_title">Смотреть бесплатно</string>
@@ -66,9 +81,11 @@
     <string name="error_generic">Что-то пошло не так</string>
     <string name="error_no_internet">Нет подключения к интернету</string>
     <string name="error_retry">Повторить</string>
+    <string name="error_with_message">Ошибка: %1$s</string>
     <string name="offline_mode">Показаны сохранённые данные</string>
 
     <!-- Общее -->
     <string name="action_back">Назад</string>
+    <string name="back">Назад</string>
     <string name="action_close">Закрыть</string>
 </resources>

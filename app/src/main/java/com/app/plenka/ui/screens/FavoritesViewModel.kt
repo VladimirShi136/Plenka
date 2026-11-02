@@ -6,6 +6,7 @@ import com.app.plenka.domain.model.Movie
 import com.app.plenka.domain.repository.MovieRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 sealed interface FavoritesUiState {
@@ -15,7 +16,7 @@ sealed interface FavoritesUiState {
 
 @HiltViewModel
 class FavoritesViewModel @Inject constructor(
-    movieRepository: MovieRepository
+    private val movieRepository: MovieRepository
 ) : ViewModel() {
 
     val uiState: StateFlow<FavoritesUiState> = movieRepository.getFavoriteMovies()
@@ -27,4 +28,9 @@ class FavoritesViewModel @Inject constructor(
             started = SharingStarted.WhileSubscribed(5000),
             initialValue = FavoritesUiState.Loading
         )
+
+    /** Убрать фильм из избранного (список обновится сам через Flow из Room). */
+    fun removeFromFavorites(movie: Movie) {
+        viewModelScope.launch { movieRepository.toggleFavorite(movie) }
+    }
 }
