@@ -5,7 +5,7 @@
     <string name="nav_home">Главная</string>
     <string name="nav_search">Поиск</string>
     <string name="nav_favorites">Избранное</string>
-    <string name="nav_free">Бесплатно</string>
+    <string name="nav_free">Смотреть</string>
     <string name="nav_settings">Настройки</string>
 
     <!-- Главная -->
@@ -26,6 +26,12 @@
     <string name="details_cast">В ролях</string>
     <string name="details_year">Год</string>
     <string name="details_rating">Рейтинг</string>
+    <string name="details_rating_kp">Кинопоиск</string>
+    <string name="details_rating_imdb">IMDb</string>
+    <string name="details_minutes">%1$d мин.</string>
+    <string name="details_expand">Читать полностью</string>
+    <string name="details_collapse">Свернуть</string>
+    <string name="details_load_error">Не удалось загрузить фильм</string>
     <string name="details_trailer">Трейлер</string>
     <string name="details_where_to_watch">Где смотреть</string>
     <string name="favorite_add">В избранное</string>

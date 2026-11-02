@@ -29,8 +29,12 @@ class DetailViewModel @Inject constructor(
     private val _uiState = MutableStateFlow<DetailUiState>(DetailUiState.Loading)
     val uiState: StateFlow<DetailUiState> = _uiState.asStateFlow()
 
+    private val _isFavorite = MutableStateFlow(false)
+    val isFavorite: StateFlow<Boolean> = _isFavorite.asStateFlow()
+
     init {
         loadMovieDetails()
+        checkFavoriteStatus()
     }
 
     fun loadMovieDetails() {
@@ -44,6 +48,33 @@ class DetailViewModel @Inject constructor(
                     _uiState.value = DetailUiState.Error(error.localizedMessage ?: "Ошибка загрузки")
                 }
             )
+        }
+    }
+
+    private fun checkFavoriteStatus() {
+        viewModelScope.launch {
+            _isFavorite.value = repository.isFavorite(movieId)
+        }
+    }
+
+    fun toggleFavorite() {
+        viewModelScope.launch {
+            val currentState = _uiState.value
+            if (currentState is DetailUiState.Success) {
+                val details = currentState.movie
+                val movie = com.app.plenka.domain.model.Movie(
+                    id = details.id,
+                    title = details.title,
+                    originalTitle = details.originalTitle,
+                    posterUrl = details.posterUrl,
+                    posterUrlPreview = details.posterUrl,
+                    year = details.year,
+                    rating = details.rating,
+                    genres = details.genres
+                )
+                repository.toggleFavorite(movie)
+                _isFavorite.value = repository.isFavorite(movieId)
+            }
         }
     }
 }

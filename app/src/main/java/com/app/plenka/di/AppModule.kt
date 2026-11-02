@@ -13,6 +13,12 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
 
+import android.content.Context
+import androidx.room.Room
+import com.app.plenka.data.local.MovieDao
+import com.app.plenka.data.local.PlenkaDatabase
+import dagger.hilt.android.qualifiers.ApplicationContext
+
 @Module
 @InstallIn(SingletonComponent::class)
 object AppModule {
@@ -40,7 +46,23 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideMovieRepository(api: KinopoiskApi): MovieRepository {
-        return MovieRepositoryImpl(api)
+    fun providePlenkaDatabase(@ApplicationContext context: Context): PlenkaDatabase {
+        return Room.databaseBuilder(
+            context,
+            PlenkaDatabase::class.java,
+            "plenka_database"
+        ).build()
+    }
+
+    @Provides
+    @Singleton
+    fun provideMovieDao(database: PlenkaDatabase): MovieDao {
+        return database.movieDao()
+    }
+
+    @Provides
+    @Singleton
+    fun provideMovieRepository(api: KinopoiskApi, movieDao: MovieDao): MovieRepository {
+        return MovieRepositoryImpl(api, movieDao)
     }
 }

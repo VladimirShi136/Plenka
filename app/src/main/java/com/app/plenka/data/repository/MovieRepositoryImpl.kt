@@ -5,13 +5,19 @@ import com.app.plenka.data.mapper.toDomain
 import com.app.plenka.data.remote.KinopoiskApi
 import com.app.plenka.domain.model.Movie
 import com.app.plenka.domain.repository.MovieRepository
+import com.app.plenka.data.local.MovieDao
+import com.app.plenka.data.local.entity.toDomain
+import com.app.plenka.data.local.entity.toEntity
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 /**
  * Реализация интерфейса репозитория
  */
 class MovieRepositoryImpl @Inject constructor(
-    private val api: KinopoiskApi
+    private val api: KinopoiskApi,
+    private val movieDao: MovieDao
 ) : MovieRepository {
 
     private val apiKey: String
@@ -43,6 +49,25 @@ class MovieRepositoryImpl @Inject constructor(
             Result.success(dto.toDomain())
         } catch (e: Exception) {
             Result.failure(e)
+        }
+    }
+
+    override fun getFavoriteMovies(): Flow<List<Movie>> {
+        return movieDao.getFavoriteMovies().map { entities ->
+            entities.map { it.toDomain() }
+        }
+    }
+
+    override suspend fun isFavorite(movieId: Int): Boolean {
+        return movieDao.getMovieById(movieId) != null
+    }
+
+    override suspend fun toggleFavorite(movie: Movie) {
+        val existing = movieDao.getMovieById(movie.id)
+        if (existing != null) {
+            movieDao.removeFavorite(movie.id)
+        } else {
+            movieDao.insertFavorite(movie.toEntity())
         }
     }
 }

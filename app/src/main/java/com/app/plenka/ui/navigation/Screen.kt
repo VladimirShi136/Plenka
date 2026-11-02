@@ -1,28 +1,35 @@
 package com.app.plenka.ui.navigation
 
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.Settings
-import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
+import com.app.plenka.R
 
 /**
- * Sealed-класс, определяющий все маршруты приложения
+ * Sealed-класс, определяющий все маршруты приложения.
+ * [Tab] это пункты нижней панели: у них есть подпись и пара иконок (обычная и для выбранного пункта).
  */
-sealed class Screen(val route: String, val title: String, val icon: ImageVector) {
-    object Home : Screen("home", "Главная", Icons.Default.Home)
-    object Search : Screen("search", "Поиск", Icons.Default.Search)
-    object Favorites : Screen("favorites", "Избранное", Icons.Default.Favorite)
-    object FreeMovies : Screen("free_movies", "Смотреть", Icons.Default.PlayArrow)
-    object Settings : Screen("settings", "Настройки", Icons.Default.Settings)
-    object Detail : Screen("detail/{movieId}", "Детали", Icons.Default.Home) {
+sealed class Screen(val route: String) {
+
+    sealed class Tab(
+        route: String,
+        @StringRes val labelRes: Int,
+        @DrawableRes val iconRes: Int,
+        @DrawableRes val selectedIconRes: Int
+    ) : Screen(route)
+
+    data object Home : Tab("home", R.string.nav_home, R.drawable.ic_nav_home, R.drawable.ic_nav_home_filled)
+    data object Search : Tab("search", R.string.nav_search, R.drawable.ic_nav_search, R.drawable.ic_nav_search_filled)
+    data object Favorites : Tab("favorites", R.string.nav_favorites, R.drawable.ic_nav_favorites, R.drawable.ic_nav_favorites_filled)
+    data object FreeMovies : Tab("free_movies", R.string.nav_free, R.drawable.ic_nav_watch, R.drawable.ic_nav_watch_filled)
+    data object Settings : Tab("settings", R.string.nav_settings, R.drawable.ic_nav_settings, R.drawable.ic_nav_settings_filled)
+
+    data object Detail : Screen("detail/{movieId}") {
         fun createRoute(movieId: Int) = "detail/$movieId"
     }
 }
 
-val items = listOf(
+/** Пункты нижней панели в порядке отображения. */
+val items: List<Screen.Tab> = listOf(
     Screen.Home,
     Screen.Search,
     Screen.Favorites,
