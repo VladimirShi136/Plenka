@@ -11,6 +11,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.app.plenka.ui.screens.*
+import com.app.plenka.ui.theme.ThemeMode
 
 /**
  * Граф навигации Jetpack Navigation Compose, связывающий экраны между собой
@@ -19,6 +20,8 @@ import com.app.plenka.ui.screens.*
 fun PlenkaNavGraph(
     navController: NavHostController,
     tabPadding: PaddingValues,
+    currentThemeMode: ThemeMode,
+    onThemeModeChanged: (ThemeMode) -> Unit,
     modifier: Modifier = Modifier
 ) {
     // Отступы применяются внутри каждой вкладки, а не ко всему NavHost
@@ -104,7 +107,13 @@ fun PlenkaNavGraph(
             )
         }
 
-        composable(Screen.Settings.route) { SettingsScreen(modifier = tabModifier) }
+        composable(Screen.Settings.route) {
+            SettingsScreen(
+                currentThemeMode = currentThemeMode,
+                onThemeModeChanged = onThemeModeChanged,
+                modifier = tabModifier
+            )
+        }
         composable(
             route = Screen.VideoPlayer.route,
             arguments = listOf(androidx.navigation.navArgument("url") { type = androidx.navigation.NavType.StringType; nullable = true; defaultValue = "" })

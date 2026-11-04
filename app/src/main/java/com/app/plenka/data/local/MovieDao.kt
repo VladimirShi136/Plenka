@@ -17,8 +17,8 @@ interface MovieDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertMoviesCache(movies: List<MovieEntity>)
 
-    @Query("DELETE FROM movies_cache WHERE category = :category")
-    suspend fun clearCategoryCache(category: String)
+    @Query("DELETE FROM movies_cache")
+    suspend fun clearAllCache()
 
     @Query("SELECT * FROM favorite_movies")
     fun getFavoriteMovies(): Flow<List<com.app.plenka.data.local.entity.FavoriteEntity>>

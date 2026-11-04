@@ -22,6 +22,7 @@ import com.app.plenka.ui.navigation.PlenkaBottomBar
 import com.app.plenka.ui.navigation.PlenkaNavGraph
 import com.app.plenka.ui.navigation.items
 import com.app.plenka.ui.theme.PlenkaTheme
+import com.app.plenka.ui.theme.ThemeMode
 import dagger.hilt.android.AndroidEntryPoint
 
 /**
@@ -34,7 +35,8 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            PlenkaTheme {
+            var themeMode by rememberSaveable { mutableStateOf(ThemeMode.SYSTEM) }
+            PlenkaTheme(themeMode = themeMode) {
                 var showSplash by rememberSaveable { mutableStateOf(true) }
                 val navController = rememberNavController()
 
@@ -60,7 +62,9 @@ class MainActivity : ComponentActivity() {
                         // отступами сам, чтобы постер мог уходить под статус-бар
                         PlenkaNavGraph(
                             navController = navController,
-                            tabPadding = tabPadding
+                            tabPadding = tabPadding,
+                            currentThemeMode = themeMode,
+                            onThemeModeChanged = { themeMode = it }
                         )
                     }
 

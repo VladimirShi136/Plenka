@@ -417,12 +417,3 @@ fun FavoritesScreen(
     }
 }
 
-@Composable
-fun SettingsScreen(modifier: Modifier = Modifier) {
-    EmptyState(
-        iconRes = R.drawable.ic_nav_settings,
-        title = stringResource(R.string.nav_settings),
-        subtitle = stringResource(R.string.placeholder_soon),
-        modifier = modifier
-    )
-}
