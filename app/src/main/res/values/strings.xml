@@ -5,7 +5,6 @@
     <string name="nav_home">Главная</string>
     <string name="nav_search">Поиск</string>
     <string name="nav_favorites">Избранное</string>
-    <string name="nav_free">Смотреть</string>
     <string name="nav_settings">Настройки</string>
 
     <!-- Главная -->
@@ -15,7 +14,7 @@
     <string name="section_see_all">Все</string>
 
     <!-- Поиск -->
-    <string name="search_hint">Название фильма или сериала</string>
+    <string name="search_hint">Введите название</string>
     <string name="search_start">Начните вводить название</string>
     <string name="search_empty">Ничего не найдено</string>
     <string name="search_clear">Очистить</string>
@@ -57,14 +56,6 @@
     <string name="favorites_empty_title">В избранном пока пусто</string>
     <string name="favorites_empty_hint">Нажмите на сердечко на странице фильма, и он появится здесь</string>
 
-    <!-- Бесплатный просмотр -->
-    <string name="free_title">Смотреть бесплатно</string>
-    <string name="free_subtitle">Фильмы в общественном достоянии и под свободными лицензиями</string>
-    <string name="free_license">Лицензия: %1$s</string>
-    <string name="free_authors">Авторы: %1$s</string>
-    <string name="free_continue">Продолжить просмотр</string>
-    <string name="free_play">Смотреть</string>
-
     <!-- Настройки -->
     <string name="settings_theme">Тема</string>
     <string name="settings_theme_system">Как в системе</string>
@@ -73,16 +64,14 @@
     <string name="settings_clear_cache">Очистить кэш</string>
     <string name="settings_cache_cleared">Кэш очищен</string>
     <string name="settings_about">О приложении</string>
-    <string name="settings_about_sources">Данные о фильмах: Kinopoisk API Unofficial. Бесплатные фильмы: Blender Foundation (CC BY) и Internet Archive (общественное достояние).</string>
+    <string name="settings_about_sources">Данные о фильмах: Kinopoisk API Unofficial.</string>
     <string name="settings_about_version">Версия %1$s</string>
 
     <!-- Состояния и ошибки -->
     <string name="loading">Загрузка…</string>
-    <string name="error_generic">Что-то пошло не так</string>
-    <string name="error_no_internet">Нет подключения к интернету</string>
+    <string name="error_title">Не удалось загрузить данные</string>
+    <string name="error_subtitle">Проверьте подключение к интернету и попробуйте снова</string>
     <string name="error_retry">Повторить</string>
-    <string name="error_with_message">Ошибка: %1$s</string>
-    <string name="offline_mode">Показаны сохранённые данные</string>
 
     <!-- Общее -->
     <string name="action_back">Назад</string>

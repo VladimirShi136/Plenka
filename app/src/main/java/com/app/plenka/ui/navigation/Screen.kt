@@ -20,7 +20,6 @@ sealed class Screen(val route: String) {
     data object Home : Tab("home", R.string.nav_home, R.drawable.ic_nav_home, R.drawable.ic_nav_home_filled)
     data object Search : Tab("search", R.string.nav_search, R.drawable.ic_nav_search, R.drawable.ic_nav_search_filled)
     data object Favorites : Tab("favorites", R.string.nav_favorites, R.drawable.ic_nav_favorites, R.drawable.ic_nav_favorites_filled)
-    data object FreeMovies : Tab("free_movies", R.string.nav_free, R.drawable.ic_nav_watch, R.drawable.ic_nav_watch_filled)
     data object Settings : Tab("settings", R.string.nav_settings, R.drawable.ic_nav_settings, R.drawable.ic_nav_settings_filled)
 
     data object Detail : Screen("detail/{movieId}") {
@@ -37,6 +36,5 @@ val items: List<Screen.Tab> = listOf(
     Screen.Home,
     Screen.Search,
     Screen.Favorites,
-    Screen.FreeMovies,
     Screen.Settings
 )

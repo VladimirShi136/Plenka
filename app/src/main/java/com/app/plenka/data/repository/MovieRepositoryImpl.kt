@@ -8,6 +8,7 @@ import com.app.plenka.domain.repository.MovieRepository
 import com.app.plenka.data.local.MovieDao
 import com.app.plenka.data.local.entity.toDomain
 import com.app.plenka.data.local.entity.toEntity
+import com.app.plenka.data.local.entity.toFavoriteEntity
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
@@ -24,22 +25,44 @@ class MovieRepositoryImpl @Inject constructor(
         get() = BuildConfig.KP_API_KEY
 
     override suspend fun getPopularMovies(page: Int): Result<List<Movie>> {
+        val category = "popular"
         return try {
             val response = api.getCollections(apiKey = apiKey, type = "TOP_POPULAR_MOVIES", page = page)
             val movies = response.items?.map { it.toDomain() } ?: emptyList()
+            // Сохраняем в кэш
+            val entities = movies.map { it.toEntity(category, page) }
+            movieDao.insertMoviesCache(entities)
             Result.success(movies)
+        } catch (e: kotlin.coroutines.cancellation.CancellationException) {
+            throw e
         } catch (e: Exception) {
-            Result.failure(e)
+            // При ошибке сети пробуем вернуть из локального кэша
+            val cached = movieDao.getCachedMovies(category, page)
+            if (cached.isNotEmpty()) {
+                Result.success(cached.map { it.toDomain() })
+            } else {
+                Result.failure(e)
+            }
         }
     }
 
     override suspend fun searchMovies(keyword: String, page: Int): Result<List<Movie>> {
+        val category = "search_${keyword.trim().lowercase()}"
         return try {
             val response = api.searchMovies(apiKey = apiKey, keyword = keyword, page = page)
             val movies = response.items?.map { it.toDomain() } ?: emptyList()
+            val entities = movies.map { it.toEntity(category, page) }
+            movieDao.insertMoviesCache(entities)
             Result.success(movies)
+        } catch (e: kotlin.coroutines.cancellation.CancellationException) {
+            throw e
         } catch (e: Exception) {
-            Result.failure(e)
+            val cached = movieDao.getCachedMovies(category, page)
+            if (cached.isNotEmpty()) {
+                Result.success(cached.map { it.toDomain() })
+            } else {
+                Result.failure(e)
+            }
         }
     }
 
@@ -47,6 +70,8 @@ class MovieRepositoryImpl @Inject constructor(
         return try {
             val dto = api.getFilmDetails(apiKey = apiKey, filmId = filmId)
             Result.success(dto.toDomain())
+        } catch (e: kotlin.coroutines.cancellation.CancellationException) {
+            throw e
         } catch (e: Exception) {
             Result.failure(e)
         }
@@ -67,7 +92,7 @@ class MovieRepositoryImpl @Inject constructor(
         if (existing != null) {
             movieDao.removeFavorite(movie.id)
         } else {
-            movieDao.insertFavorite(movie.toEntity())
+            movieDao.insertFavorite(movie.toFavoriteEntity())
         }
     }
 }

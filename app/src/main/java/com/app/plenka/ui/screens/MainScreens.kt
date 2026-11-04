@@ -24,7 +24,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -101,41 +100,15 @@ fun HomeScreen(
                 }
             }
             is HomeUiState.Error -> {
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(16.dp),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Text(
-                        text = stringResource(R.string.error_with_message, state.message),
-                        color = MaterialTheme.colorScheme.error,
-                        style = MaterialTheme.typography.bodyLarge
-                    )
-                    Spacer(modifier = Modifier.height(16.dp))
-                    RetryButton(onClick = { viewModel.loadPopularMovies() })
-                }
+                com.app.plenka.ui.components.ErrorState(
+                    message = state.message,
+                    onRetry = { viewModel.loadPopularMovies() }
+                )
             }
         }
     }
 }
 
-@Composable
-private fun RetryButton(onClick: () -> Unit) {
-    Button(
-        onClick = onClick,
-        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
-    ) {
-        Icon(
-            painter = painterResource(R.drawable.ic_refresh),
-            contentDescription = null,
-            modifier = Modifier.size(18.dp)
-        )
-        Spacer(modifier = Modifier.width(8.dp))
-        Text(stringResource(R.string.error_retry))
-    }
-}
 
 /**
  * Карточка фильма. Если передан [onFavoriteClick], на постере появляется сердечко «убрать из избранного».
@@ -359,21 +332,11 @@ fun SearchScreen(
                     }
                 }
                 is SearchUiState.Error -> {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .weight(1f),
-                        verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Text(
-                            text = stringResource(R.string.error_with_message, state.message),
-                            style = MaterialTheme.typography.bodyLarge,
-                            color = MaterialTheme.colorScheme.error
-                        )
-                        Spacer(modifier = Modifier.height(16.dp))
-                        RetryButton(onClick = { viewModel.retry() })
-                    }
+                    com.app.plenka.ui.components.ErrorState(
+                        message = state.message,
+                        onRetry = { viewModel.retry() },
+                        modifier = Modifier.weight(1f)
+                    )
                 }
             }
         }
@@ -452,16 +415,6 @@ fun FavoritesScreen(
             }
         }
     }
-}
-
-@Composable
-fun FreeMoviesScreen(modifier: Modifier = Modifier) {
-    EmptyState(
-        iconRes = R.drawable.ic_nav_watch,
-        title = stringResource(R.string.free_title),
-        subtitle = stringResource(R.string.free_subtitle),
-        modifier = modifier
-    )
 }
 
 @Composable

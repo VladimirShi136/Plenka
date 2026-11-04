@@ -11,14 +11,23 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface MovieDao {
 
-    @Query("SELECT * FROM favorite_movies")
-    fun getFavoriteMovies(): Flow<List<MovieEntity>>
-
-    @Query("SELECT * FROM favorite_movies WHERE id = :movieId")
-    suspend fun getMovieById(movieId: Int): MovieEntity?
+    @Query("SELECT * FROM movies_cache WHERE category = :category AND page = :page")
+    suspend fun getCachedMovies(category: String, page: Int): List<MovieEntity>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertFavorite(movie: MovieEntity)
+    suspend fun insertMoviesCache(movies: List<MovieEntity>)
+
+    @Query("DELETE FROM movies_cache WHERE category = :category")
+    suspend fun clearCategoryCache(category: String)
+
+    @Query("SELECT * FROM favorite_movies")
+    fun getFavoriteMovies(): Flow<List<com.app.plenka.data.local.entity.FavoriteEntity>>
+
+    @Query("SELECT * FROM favorite_movies WHERE id = :movieId")
+    suspend fun getMovieById(movieId: Int): com.app.plenka.data.local.entity.FavoriteEntity?
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertFavorite(movie: com.app.plenka.data.local.entity.FavoriteEntity)
 
     @Query("DELETE FROM favorite_movies WHERE id = :movieId")
     suspend fun removeFavorite(movieId: Int)

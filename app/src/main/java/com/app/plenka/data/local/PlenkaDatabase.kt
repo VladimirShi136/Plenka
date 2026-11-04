@@ -4,7 +4,7 @@ import androidx.room.Database
 import androidx.room.RoomDatabase
 import com.app.plenka.data.local.entity.MovieEntity
 
-@Database(entities = [MovieEntity::class], version = 1, exportSchema = false)
+@Database(entities = [MovieEntity::class, com.app.plenka.data.local.entity.FavoriteEntity::class], version = 2, exportSchema = false)
 abstract class PlenkaDatabase : RoomDatabase() {
     abstract fun movieDao(): MovieDao
 }

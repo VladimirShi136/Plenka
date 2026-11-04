@@ -57,7 +57,9 @@ object AppModule {
             context,
             PlenkaDatabase::class.java,
             "plenka_database"
-        ).build()
+        )
+            .fallbackToDestructiveMigration(true)
+            .build()
     }
 
     @Provides

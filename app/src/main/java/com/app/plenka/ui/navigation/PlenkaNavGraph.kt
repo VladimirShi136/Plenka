@@ -103,14 +103,7 @@ fun PlenkaNavGraph(
                 }
             )
         }
-        composable(Screen.FreeMovies.route) {
-            FreeMoviesScreen(
-                modifier = tabModifier,
-                onMovieClick = { videoUrl ->
-                    navController.navigate(Screen.VideoPlayer.createRoute(videoUrl))
-                }
-            )
-        }
+
         composable(Screen.Settings.route) { SettingsScreen(modifier = tabModifier) }
         composable(
             route = Screen.VideoPlayer.route,
