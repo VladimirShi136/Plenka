@@ -66,7 +66,12 @@ class SearchViewModel @Inject constructor(
                 _uiState.value = SearchUiState.Success(movies)
             },
             onFailure = { error ->
-                _uiState.value = SearchUiState.Error(error.localizedMessage ?: "Ошибка поиска")
+                val errorMessage = if (error is java.net.UnknownHostException || error is java.io.IOException) {
+                    "Проверьте подключение к интернету"
+                } else {
+                    error.localizedMessage ?: "Ошибка поиска"
+                }
+                _uiState.value = SearchUiState.Error(errorMessage)
             }
         )
     }

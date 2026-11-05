@@ -30,6 +30,12 @@ interface KinopoiskApi {
         @retrofit2.http.Path("id") filmId: Int
     ): com.app.plenka.data.remote.dto.MovieDetailDto
 
+    @GET("v2.2/films/{id}/videos")
+    suspend fun getFilmVideos(
+        @Header("X-API-KEY") apiKey: String,
+        @retrofit2.http.Path("id") filmId: Int
+    ): com.app.plenka.data.remote.dto.VideosResponse
+
     companion object {
         const val BASE_URL = "https://kinopoiskapiunofficial.tech/api/"
     }

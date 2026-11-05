@@ -46,7 +46,7 @@
     <string name="details_expand">Читать полностью</string>
     <string name="details_collapse">Свернуть</string>
     <string name="details_load_error">Не удалось загрузить фильм</string>
-    <string name="details_trailer">Трейлер</string>
+    <string name="details_trailer">Смотреть трейлер</string>
     <string name="details_where_to_watch">Где смотреть</string>
     <string name="favorite_add">В избранное</string>
     <string name="favorite_remove">Убрать из избранного</string>

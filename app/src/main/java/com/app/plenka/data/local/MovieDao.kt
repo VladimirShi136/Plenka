@@ -11,8 +11,11 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface MovieDao {
 
+    @Query("SELECT * FROM movies_cache WHERE category = :category")
+    suspend fun getCachedMovies(category: String): List<MovieEntity>
+
     @Query("SELECT * FROM movies_cache WHERE category = :category AND page = :page")
-    suspend fun getCachedMovies(category: String, page: Int): List<MovieEntity>
+    suspend fun getCachedMoviesByPage(category: String, page: Int): List<MovieEntity>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertMoviesCache(movies: List<MovieEntity>)

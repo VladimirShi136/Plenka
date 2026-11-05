@@ -26,8 +26,8 @@ sealed class Screen(val route: String) {
         fun createRoute(movieId: Int) = "detail/$movieId"
     }
 
-    data object VideoPlayer : Screen("video_player?url={url}") {
-        fun createRoute(url: String) = "video_player?url=${java.net.URLEncoder.encode(url, "UTF-8")}"
+    data object WebView : Screen("webview?url={url}&title={title}") {
+        fun createRoute(url: String, title: String) = "webview?url=${java.net.URLEncoder.encode(url, "UTF-8")}&title=${java.net.URLEncoder.encode(title, "UTF-8")}"
     }
 }
 

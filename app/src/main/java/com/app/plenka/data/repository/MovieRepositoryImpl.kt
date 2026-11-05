@@ -36,10 +36,10 @@ class MovieRepositoryImpl @Inject constructor(
         } catch (e: kotlin.coroutines.cancellation.CancellationException) {
             throw e
         } catch (e: Exception) {
-            // При ошибке сети пробуем вернуть из локального кэша
-            val cached = movieDao.getCachedMovies(category, page)
+            // При ошибке сети пробуем вернуть из локального кэша (все страницы категории)
+            val cached = movieDao.getCachedMovies(category)
             if (cached.isNotEmpty()) {
-                Result.success(cached.map { it.toDomain() })
+                Result.success(cached.sortedBy { it.page }.map { it.toDomain() })
             } else {
                 Result.failure(e)
             }
@@ -57,9 +57,9 @@ class MovieRepositoryImpl @Inject constructor(
         } catch (e: kotlin.coroutines.cancellation.CancellationException) {
             throw e
         } catch (e: Exception) {
-            val cached = movieDao.getCachedMovies(category, page)
+            val cached = movieDao.getCachedMovies(category)
             if (cached.isNotEmpty()) {
-                Result.success(cached.map { it.toDomain() })
+                Result.success(cached.sortedBy { it.page }.map { it.toDomain() })
             } else {
                 Result.failure(e)
             }
@@ -69,11 +69,45 @@ class MovieRepositoryImpl @Inject constructor(
     override suspend fun getMovieDetails(filmId: Int): Result<com.app.plenka.domain.model.MovieDetails> {
         return try {
             val dto = api.getFilmDetails(apiKey = apiKey, filmId = filmId)
-            Result.success(dto.toDomain())
+            val videosResponse = try {
+                api.getFilmVideos(apiKey = apiKey, filmId = filmId)
+            } catch (_: Exception) {
+                null
+            }
+            // Сначала пробуем найти KINOPOISK_WIDGET, если нет — берем YOUTUBE или любой другой
+            val videoItem = videosResponse?.items?.firstOrNull { 
+                it.site.equals("KINOPOISK_WIDGET", ignoreCase = true) && !it.url.isNullOrBlank()
+            } ?: videosResponse?.items?.firstOrNull { 
+                !it.url.isNullOrBlank()
+            }
+            val trailerUrl = videoItem?.url
+
+            Result.success(dto.toDomain(trailerUrl = trailerUrl))
         } catch (e: kotlin.coroutines.cancellation.CancellationException) {
             throw e
         } catch (e: Exception) {
-            Result.failure(e)
+            // Если нет сети, пробуем взять базовые данные из избранного
+            val favorite = movieDao.getMovieById(filmId)
+            if (favorite != null) {
+                val details = com.app.plenka.domain.model.MovieDetails(
+                    id = favorite.id,
+                    title = favorite.title,
+                    originalTitle = favorite.originalTitle,
+                    year = favorite.year,
+                    posterUrl = favorite.posterUrl,
+                    rating = favorite.rating,
+                    ratingImdb = null,
+                    genres = favorite.genres.split(", ").filter { it.isNotBlank() },
+                    description = null,
+                    shortDescription = null,
+                    filmLength = null,
+                    countries = emptyList(),
+                    trailerUrl = null
+                )
+                Result.success(details)
+            } else {
+                Result.failure(e)
+            }
         }
     }
 

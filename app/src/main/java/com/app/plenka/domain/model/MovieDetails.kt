@@ -15,5 +15,6 @@ data class MovieDetails(
     val description: String?,
     val shortDescription: String?,
     val filmLength: Int?,
-    val countries: List<String>
+    val countries: List<String>,
+    val trailerUrl: String?
 )

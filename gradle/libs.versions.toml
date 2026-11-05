@@ -16,6 +16,7 @@ hilt = "2.60.1"
 coil = "2.7.0"
 navigationCompose = "2.10.2"
 media3 = "1.5.1"
+datastore = "1.1.7"
 ksp = "2.3.4"
 
 [libraries]
@@ -53,6 +54,9 @@ room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
 hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
 hilt-compiler = { group = "com.google.dagger", name = "hilt-compiler", version.ref = "hilt" }
 androidx-hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navigation-compose", version = "1.4.0" }
+
+# DataStore
+androidx-datastore-preferences = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "datastore" }
 
 # Media3
 media3-exoplayer = { group = "androidx.media3", name = "media3-exoplayer", version.ref = "media3" }

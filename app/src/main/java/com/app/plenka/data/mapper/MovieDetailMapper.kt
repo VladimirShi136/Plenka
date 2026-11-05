@@ -6,7 +6,7 @@ import com.app.plenka.domain.model.MovieDetails
 /**
  * Функция для конвертации DTO в movieDetails
  */
-fun MovieDetailDto.toDomain(): MovieDetails {
+fun MovieDetailDto.toDomain(trailerUrl: String? = null): MovieDetails {
     return MovieDetails(
         id = kinopoiskId ?: filmId ?: 0,
         title = nameRu ?: nameEn ?: nameOriginal ?: "Без названия",
@@ -19,6 +19,7 @@ fun MovieDetailDto.toDomain(): MovieDetails {
         description = description ?: shortDescription,
         shortDescription = shortDescription,
         filmLength = filmLength,
-        countries = countries?.mapNotNull { it.country } ?: emptyList()
+        countries = countries?.mapNotNull { it.country } ?: emptyList(),
+        trailerUrl = trailerUrl
     )
 }

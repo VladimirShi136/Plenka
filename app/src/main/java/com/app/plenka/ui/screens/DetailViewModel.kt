@@ -45,7 +45,12 @@ class DetailViewModel @Inject constructor(
                     _uiState.value = DetailUiState.Success(details)
                 },
                 onFailure = { error ->
-                    _uiState.value = DetailUiState.Error(error.localizedMessage ?: "Ошибка загрузки")
+                    val errorMessage = if (error is java.net.UnknownHostException || error is java.io.IOException) {
+                        "Проверьте подключение к интернету"
+                    } else {
+                        error.localizedMessage ?: "Ошибка загрузки"
+                    }
+                    _uiState.value = DetailUiState.Error(errorMessage)
                 }
             )
         }

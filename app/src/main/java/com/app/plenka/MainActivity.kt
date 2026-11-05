@@ -4,10 +4,12 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material3.Scaffold
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -22,7 +24,7 @@ import com.app.plenka.ui.navigation.PlenkaBottomBar
 import com.app.plenka.ui.navigation.PlenkaNavGraph
 import com.app.plenka.ui.navigation.items
 import com.app.plenka.ui.theme.PlenkaTheme
-import com.app.plenka.ui.theme.ThemeMode
+import com.app.plenka.ui.screens.SettingsViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 /**
@@ -30,12 +32,14 @@ import dagger.hilt.android.AndroidEntryPoint
  */
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+    private val settingsViewModel: SettingsViewModel by viewModels()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            var themeMode by rememberSaveable { mutableStateOf(ThemeMode.SYSTEM) }
+            val themeMode by settingsViewModel.themeMode.collectAsState()
             PlenkaTheme(themeMode = themeMode) {
                 var showSplash by rememberSaveable { mutableStateOf(true) }
                 val navController = rememberNavController()
@@ -64,7 +68,7 @@ class MainActivity : ComponentActivity() {
                             navController = navController,
                             tabPadding = tabPadding,
                             currentThemeMode = themeMode,
-                            onThemeModeChanged = { themeMode = it }
+                            onThemeModeChanged = settingsViewModel::setThemeMode
                         )
                     }
 

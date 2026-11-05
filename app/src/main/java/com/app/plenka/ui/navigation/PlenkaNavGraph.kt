@@ -114,22 +114,31 @@ fun PlenkaNavGraph(
                 modifier = tabModifier
             )
         }
-        composable(
-            route = Screen.VideoPlayer.route,
-            arguments = listOf(androidx.navigation.navArgument("url") { type = androidx.navigation.NavType.StringType; nullable = true; defaultValue = "" })
-        ) { backStackEntry ->
-            val encodedUrl = backStackEntry.arguments?.getString("url") ?: ""
-            val videoUrl = java.net.URLDecoder.decode(encodedUrl, "UTF-8")
-            VideoPlayerScreen(
-                videoUrl = videoUrl,
-                onBackClick = { navController.popBackStack() }
-            )
-        }
+
         composable(
             route = Screen.Detail.route,
             arguments = listOf(androidx.navigation.navArgument("movieId") { type = androidx.navigation.NavType.IntType })
         ) {
             DetailScreen(
+                onBackClick = { navController.popBackStack() },
+                onOpenWebView = { url, title ->
+                    navController.navigate(Screen.WebView.createRoute(url, title))
+                }
+            )
+        }
+
+        composable(
+            route = "webview?url={url}&title={title}",
+            arguments = listOf(
+                androidx.navigation.navArgument("url") { type = androidx.navigation.NavType.StringType; defaultValue = "" },
+                androidx.navigation.navArgument("title") { type = androidx.navigation.NavType.StringType; defaultValue = "" }
+            )
+        ) { backStackEntry ->
+            val url = java.net.URLDecoder.decode(backStackEntry.arguments?.getString("url") ?: "", "UTF-8")
+            val title = java.net.URLDecoder.decode(backStackEntry.arguments?.getString("title") ?: "", "UTF-8")
+            WebViewScreen(
+                url = url,
+                title = title,
                 onBackClick = { navController.popBackStack() }
             )
         }

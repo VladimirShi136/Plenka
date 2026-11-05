@@ -1,12 +1,12 @@
 package com.app.plenka.data.local.entity
 
 import androidx.room.Entity
-import androidx.room.PrimaryKey
 import com.app.plenka.domain.model.Movie
 
-@Entity(tableName = "movies_cache")
+// Составной ключ: один и тот же фильм может лежать в кэше и «популярных», и в результатах поиска.
+// С одним ключом id вставка из поиска затирала строку «популярных».
+@Entity(tableName = "movies_cache", primaryKeys = ["id", "category"])
 data class MovieEntity(
-    @PrimaryKey
     val id: Int,
     val title: String,
     val originalTitle: String?,

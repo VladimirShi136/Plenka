@@ -67,6 +67,7 @@ import com.app.plenka.domain.model.MovieDetails
 @Composable
 fun DetailScreen(
     onBackClick: () -> Unit,
+    onOpenWebView: (String, String) -> Unit,
     viewModel: DetailViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -88,11 +89,22 @@ fun DetailScreen(
                     color = MaterialTheme.colorScheme.primary
                 )
             }
-            is DetailUiState.Success -> DetailContent(
-                movie = state.movie,
-                isFavorite = isFavorite,
-                onFavoriteClick = { viewModel.toggleFavorite() }
-            )
+            is DetailUiState.Success -> {
+                DetailContent(
+                    movie = state.movie,
+                    isFavorite = isFavorite,
+                    onFavoriteClick = { viewModel.toggleFavorite() },
+                    onTrailerClick = { url ->
+                        val targetUrl = if (!url.isNullOrBlank()) {
+                            url as String
+                        } else {
+                            val encoded = android.net.Uri.encode(state.movie.title + " трейлер")
+                            "https://www.youtube.com/results?search_query=$encoded"
+                        }
+                        onOpenWebView(targetUrl, state.movie.title)
+                    }
+                )
+            }
             is DetailUiState.Error -> DetailError(
                 message = state.message,
                 onRetry = viewModel::loadMovieDetails
@@ -126,7 +138,8 @@ fun DetailScreen(
 private fun DetailContent(
     movie: MovieDetails,
     isFavorite: Boolean,
-    onFavoriteClick: () -> Unit
+    onFavoriteClick: () -> Unit,
+    onTrailerClick: (String?) -> Unit
 ) {
     val colors = MaterialTheme.colorScheme
 
@@ -223,6 +236,32 @@ private fun DetailContent(
                 }
                 Spacer(modifier = Modifier.height(12.dp))
             }
+
+            // ---------- Кнопка трейлера ----------
+            androidx.compose.material3.Button(
+                onClick = { onTrailerClick(movie.trailerUrl) },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(50.dp),
+                shape = RoundedCornerShape(12.dp),
+                colors = androidx.compose.material3.ButtonDefaults.buttonColors(
+                    containerColor = Color(0xFFFF8E00), // фирменный оранжевый Кинопоиска
+                    contentColor = Color.White
+                )
+            ) {
+                Text(
+                    text = "Кинопоиск",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.ExtraBold
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Icon(
+                    painter = painterResource(R.drawable.ic_play),
+                    contentDescription = null,
+                    modifier = Modifier.size(18.dp)
+                )
+            }
+            Spacer(modifier = Modifier.height(16.dp))
 
             val meta = listOfNotNull(
                 movie.year?.toString(),

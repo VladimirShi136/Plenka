@@ -13,6 +13,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.app.plenka.BuildConfig
 import com.app.plenka.R
 import com.app.plenka.ui.theme.ThemeMode
 
@@ -26,7 +27,7 @@ fun SettingsScreen(
     val context = LocalContext.current
     val cacheCleared by viewModel.cacheClearedEvent.collectAsState()
     val cacheClearedMessage = stringResource(R.string.settings_cache_cleared)
-    val appVersion = stringResource(R.string.settings_about_version, "1.0")
+    val appVersion = stringResource(R.string.settings_about_version, BuildConfig.VERSION_NAME)
 
     LaunchedEffect(cacheCleared) {
         if (cacheCleared) {
@@ -53,7 +54,7 @@ fun SettingsScreen(
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.primary
                 )
-                
+
                 ThemeRadioButton(
                     text = stringResource(R.string.settings_theme_system),
                     selected = currentThemeMode == ThemeMode.SYSTEM,
@@ -80,7 +81,7 @@ fun SettingsScreen(
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.primary
                 )
-                
+
                 Surface(
                     onClick = { viewModel.clearCache() },
                     shape = MaterialTheme.shapes.medium,
