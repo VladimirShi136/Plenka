@@ -4,7 +4,6 @@ import androidx.room.Entity
 import com.app.plenka.domain.model.Movie
 
 // Составной ключ: один и тот же фильм может лежать в кэше и «популярных», и в результатах поиска.
-// С одним ключом id вставка из поиска затирала строку «популярных».
 @Entity(tableName = "movies_cache", primaryKeys = ["id", "category"])
 data class MovieEntity(
     val id: Int,
@@ -14,7 +13,7 @@ data class MovieEntity(
     val posterUrlPreview: String,
     val year: Int?,
     val rating: Double?,
-    val genres: String, // через запятую
+    val genres: List<String>, // список жанров через TypeConverter
     val category: String, // "popular" или "search_{keyword}"
     val page: Int
 )
@@ -28,7 +27,7 @@ fun MovieEntity.toDomain(): Movie {
         posterUrlPreview = posterUrlPreview,
         year = year,
         rating = rating,
-        genres = genres.split(", ").filter { it.isNotBlank() }
+        genres = genres
     )
 }
 
@@ -41,7 +40,7 @@ fun Movie.toEntity(category: String, page: Int): MovieEntity {
         posterUrlPreview = posterUrlPreview,
         year = year,
         rating = rating,
-        genres = genres.joinToString(", "),
+        genres = genres,
         category = category,
         page = page
     )

@@ -92,10 +92,11 @@ fun HomeScreen(
                 } else {
                     val gridState = rememberLazyGridState()
                     // Когда до конца списка остаётся несколько карточек, просим следующую страницу
-                    LaunchedEffect(gridState, state.movies.size) {
+                    LaunchedEffect(gridState) {
                         snapshotFlow { gridState.layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0 }
                             .collect { lastVisible ->
-                                if (lastVisible >= state.movies.size - 4 && !state.loadMoreFailed) {
+                                val currentState = viewModel.uiState.value as? HomeUiState.Success
+                                if (currentState != null && lastVisible >= currentState.movies.size - 4 && !currentState.loadMoreFailed) {
                                     viewModel.loadNextPage()
                                 }
                             }
@@ -347,7 +348,18 @@ fun SearchScreen(
                             modifier = Modifier.weight(1f)
                         )
                     } else {
+                        val gridState = rememberLazyGridState()
+                        LaunchedEffect(gridState) {
+                            snapshotFlow { gridState.layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0 }
+                                .collect { lastVisible ->
+                                    val currentState = viewModel.uiState.value as? SearchUiState.Success
+                                    if (currentState != null && lastVisible >= currentState.movies.size - 4 && !currentState.loadMoreFailed) {
+                                        viewModel.loadNextPage()
+                                    }
+                                }
+                        }
                         LazyVerticalGrid(
+                            state = gridState,
                             columns = GridCells.Fixed(2),
                             contentPadding = PaddingValues(bottom = 16.dp),
                             horizontalArrangement = Arrangement.spacedBy(12.dp),
@@ -366,6 +378,30 @@ fun SearchScreen(
                             // distinctBy: API иногда повторяет фильм, а одинаковые key роняют LazyGrid
                             items(state.movies.distinctBy { it.id }, key = { it.id }) { movie ->
                                 MovieItemCard(movie = movie, onClick = { onMovieClick(movie.id) })
+                            }
+                            if (state.isLoadingMore) {
+                                item(span = { GridItemSpan(maxLineSpan) }) {
+                                    Box(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(vertical = 8.dp),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        CircularProgressIndicator(
+                                            modifier = Modifier.size(28.dp),
+                                            color = MaterialTheme.colorScheme.primary
+                                        )
+                                    }
+                                }
+                            }
+                            if (state.loadMoreFailed) {
+                                item(span = { GridItemSpan(maxLineSpan) }) {
+                                    Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                                        TextButton(onClick = { viewModel.loadNextPage() }) {
+                                            Text(stringResource(R.string.error_retry))
+                                        }
+                                    }
+                                }
                             }
                         }
                     }

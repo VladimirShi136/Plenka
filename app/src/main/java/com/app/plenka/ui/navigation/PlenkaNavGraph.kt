@@ -122,7 +122,9 @@ fun PlenkaNavGraph(
             DetailScreen(
                 onBackClick = { navController.popBackStack() },
                 onOpenWebView = { url, title ->
-                    navController.navigate(Screen.WebView.createRoute(url, title))
+                    if (url.startsWith("https://") || url.startsWith("http://")) {
+                        navController.navigate(Screen.WebView.createRoute(url, title))
+                    }
                 }
             )
         }

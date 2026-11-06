@@ -11,6 +11,8 @@ import com.app.plenka.data.local.entity.toEntity
 import com.app.plenka.data.local.entity.toFavoriteEntity
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import javax.inject.Inject
 
 /**
@@ -23,6 +25,8 @@ class MovieRepositoryImpl @Inject constructor(
 
     private val apiKey: String
         get() = BuildConfig.KP_API_KEY
+
+    private val favoriteMutex = Mutex()
 
     override suspend fun getPopularMovies(page: Int): Result<List<Movie>> {
         val category = "popular"
@@ -57,9 +61,10 @@ class MovieRepositoryImpl @Inject constructor(
         } catch (e: kotlin.coroutines.cancellation.CancellationException) {
             throw e
         } catch (e: Exception) {
-            val cached = movieDao.getCachedMovies(category)
-            if (cached.isNotEmpty()) {
-                Result.success(cached.sortedBy { it.page }.map { it.toDomain() })
+            val cached = movieDao.getCachedMoviesByPage(category, page)
+            val allCached = if (page == 1) movieDao.getCachedMovies(category) else cached
+            if (allCached.isNotEmpty()) {
+                Result.success(allCached.sortedBy { it.page }.map { it.toDomain() })
             } else {
                 Result.failure(e)
             }
@@ -97,7 +102,7 @@ class MovieRepositoryImpl @Inject constructor(
                     posterUrl = favorite.posterUrl,
                     rating = favorite.rating,
                     ratingImdb = null,
-                    genres = favorite.genres.split(", ").filter { it.isNotBlank() },
+                    genres = favorite.genres,
                     description = null,
                     shortDescription = null,
                     filmLength = null,
@@ -118,17 +123,22 @@ class MovieRepositoryImpl @Inject constructor(
         }
     }
 
+    override fun observeIsFavorite(movieId: Int): Flow<Boolean> {
+        return movieDao.observeMovieById(movieId).map { it != null }
+    }
+
     override suspend fun isFavorite(movieId: Int): Boolean {
         return movieDao.getMovieById(movieId) != null
     }
 
     override suspend fun toggleFavorite(movie: Movie) {
-        val existing = movieDao.getMovieById(movie.id)
-        if (existing != null) {
-            movieDao.removeFavorite(movie.id)
-        } else {
-            movieDao.insertFavorite(movie.toFavoriteEntity())
+        favoriteMutex.withLock {
+            val existing = movieDao.getMovieById(movie.id)
+            if (existing != null) {
+                movieDao.removeFavorite(movie.id)
+            } else {
+                movieDao.insertFavorite(movie.toFavoriteEntity())
+            }
         }
     }
 }
-

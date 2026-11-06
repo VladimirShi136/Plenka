@@ -14,7 +14,7 @@ data class FavoriteEntity(
     val posterUrlPreview: String,
     val year: Int?,
     val rating: Double?,
-    val genres: String // через запятую
+    val genres: List<String> // список жанров через TypeConverter
 )
 
 fun FavoriteEntity.toDomain(): Movie {
@@ -26,7 +26,7 @@ fun FavoriteEntity.toDomain(): Movie {
         posterUrlPreview = posterUrlPreview,
         year = year,
         rating = rating,
-        genres = genres.split(", ").filter { it.isNotBlank() }
+        genres = genres
     )
 }
 
@@ -39,6 +39,6 @@ fun Movie.toFavoriteEntity(): FavoriteEntity {
         posterUrlPreview = posterUrlPreview,
         year = year,
         rating = rating,
-        genres = genres.joinToString(", ")
+        genres = genres
     )
 }

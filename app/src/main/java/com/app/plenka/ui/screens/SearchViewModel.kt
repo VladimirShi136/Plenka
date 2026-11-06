@@ -13,7 +13,12 @@ import javax.inject.Inject
 sealed interface SearchUiState {
     object Idle : SearchUiState
     object Loading : SearchUiState
-    data class Success(val movies: List<Movie>) : SearchUiState
+    data class Success(
+        val movies: List<Movie>,
+        val isLoadingMore: Boolean = false,
+        val loadMoreFailed: Boolean = false,
+        val endReached: Boolean = false
+    ) : SearchUiState
     data class Error(val message: String) : SearchUiState
 }
 
@@ -29,18 +34,23 @@ class SearchViewModel @Inject constructor(
     private val _uiState = MutableStateFlow<SearchUiState>(SearchUiState.Idle)
     val uiState: StateFlow<SearchUiState> = _uiState.asStateFlow()
 
+    private var currentQuery = ""
+    private var nextPage = 1
+    private var isFetchingMore = false
+
     init {
         viewModelScope.launch {
             _searchQuery
-                // Пустой запрос обрабатывается сразу (и отменяет идущий поиск), остальные ждут 400 мс
                 .debounce { if (it.isBlank()) 0L else 400L }
                 .distinctUntilChanged()
-                // collectLatest отменяет устаревший запрос, когда пришёл новый текст
                 .collectLatest { query ->
-                    if (query.trim().length < 2) {
+                    currentQuery = query.trim()
+                    nextPage = 1
+                    isFetchingMore = false
+                    if (currentQuery.length < 2) {
                         _uiState.value = SearchUiState.Idle
                     } else {
-                        performSearch(query.trim())
+                        performSearch(currentQuery, page = 1, isPagination = false)
                     }
                 }
         }
@@ -52,18 +62,54 @@ class SearchViewModel @Inject constructor(
 
     /** Повторить последний запрос после ошибки. */
     fun retry() {
-        val query = _searchQuery.value.trim()
-        if (query.length >= 2) {
-            viewModelScope.launch { performSearch(query) }
+        if (currentQuery.length >= 2) {
+            viewModelScope.launch { 
+                val currentState = _uiState.value
+                val pageToFetch = if (currentState is SearchUiState.Success) nextPage else 1
+                performSearch(currentQuery, page = pageToFetch, isPagination = pageToFetch > 1) 
+            }
         }
     }
 
-    private suspend fun performSearch(query: String) {
-        _uiState.value = SearchUiState.Loading
-        val result = movieRepository.searchMovies(keyword = query, page = 1)
+    fun loadNextPage() {
+        val current = _uiState.value as? SearchUiState.Success ?: return
+        if (isFetchingMore || current.isLoadingMore || current.endReached) return
+
+        isFetchingMore = true
+        viewModelScope.launch {
+            _uiState.value = current.copy(isLoadingMore = true, loadMoreFailed = false)
+            movieRepository.searchMovies(keyword = currentQuery, page = nextPage).fold(
+                onSuccess = { page ->
+                    val known = current.movies.mapTo(HashSet()) { it.id }
+                    val fresh = page.filter { known.add(it.id) }
+                    nextPage++
+                    isFetchingMore = false
+                    _uiState.value = current.copy(
+                        movies = current.movies + fresh,
+                        isLoadingMore = false,
+                        endReached = fresh.isEmpty()
+                    )
+                },
+                onFailure = {
+                    isFetchingMore = false
+                    _uiState.value = current.copy(isLoadingMore = false, loadMoreFailed = true)
+                }
+            )
+        }
+    }
+
+    private suspend fun performSearch(query: String, page: Int, isPagination: Boolean) {
+        if (!isPagination) {
+            _uiState.value = SearchUiState.Loading
+        }
+        val result = movieRepository.searchMovies(keyword = query, page = page)
         result.fold(
             onSuccess = { movies ->
-                _uiState.value = SearchUiState.Success(movies)
+                nextPage = page + 1
+                _uiState.value = SearchUiState.Success(
+                    movies = movies.distinctBy { it.id },
+                    endReached = movies.isEmpty()
+                )
             },
             onFailure = { error ->
                 val errorMessage = if (error is java.net.UnknownHostException || error is java.io.IOException) {

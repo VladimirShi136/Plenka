@@ -9,6 +9,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -34,7 +35,7 @@ class DetailViewModel @Inject constructor(
 
     init {
         loadMovieDetails()
-        checkFavoriteStatus()
+        observeFavoriteStatus()
     }
 
     fun loadMovieDetails() {
@@ -56,9 +57,11 @@ class DetailViewModel @Inject constructor(
         }
     }
 
-    private fun checkFavoriteStatus() {
+    private fun observeFavoriteStatus() {
         viewModelScope.launch {
-            _isFavorite.value = repository.isFavorite(movieId)
+            repository.observeIsFavorite(movieId).collectLatest { isFav ->
+                _isFavorite.value = isFav
+            }
         }
     }
 
@@ -78,7 +81,6 @@ class DetailViewModel @Inject constructor(
                     genres = details.genres
                 )
                 repository.toggleFavorite(movie)
-                _isFavorite.value = repository.isFavorite(movieId)
             }
         }
     }

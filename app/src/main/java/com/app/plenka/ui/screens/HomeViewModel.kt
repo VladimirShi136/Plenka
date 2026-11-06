@@ -36,6 +36,7 @@ class HomeViewModel @Inject constructor(
     val uiState: StateFlow<HomeUiState> = _uiState.asStateFlow()
 
     private var nextPage = 1
+    private var isFetchingMore = false
 
     init {
         loadPopularMovies()
@@ -45,6 +46,7 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.value = HomeUiState.Loading
             nextPage = 1
+            isFetchingMore = false
             val result = movieRepository.getPopularMovies(page = 1)
             result.fold(
                 onSuccess = { movies ->
@@ -69,8 +71,9 @@ class HomeViewModel @Inject constructor(
     /** Подгружает следующую страницу. Безопасно вызывать часто: лишние вызовы игнорируются. */
     fun loadNextPage() {
         val current = _uiState.value as? HomeUiState.Success ?: return
-        if (current.isLoadingMore || current.endReached) return
+        if (isFetchingMore || current.isLoadingMore || current.endReached) return
 
+        isFetchingMore = true
         viewModelScope.launch {
             _uiState.value = current.copy(isLoadingMore = true, loadMoreFailed = false)
             movieRepository.getPopularMovies(page = nextPage).fold(
@@ -78,6 +81,7 @@ class HomeViewModel @Inject constructor(
                     val known = current.movies.mapTo(HashSet()) { it.id }
                     val fresh = page.filter { known.add(it.id) }
                     nextPage++
+                    isFetchingMore = false
                     _uiState.value = current.copy(
                         movies = current.movies + fresh,
                         isLoadingMore = false,
@@ -86,6 +90,7 @@ class HomeViewModel @Inject constructor(
                     )
                 },
                 onFailure = {
+                    isFetchingMore = false
                     _uiState.value = current.copy(isLoadingMore = false, loadMoreFailed = true)
                 }
             )

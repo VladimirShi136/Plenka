@@ -14,7 +14,7 @@ interface MovieRepository {
     suspend fun getMovieDetails(filmId: Int): Result<MovieDetails>
 
     fun getFavoriteMovies(): Flow<List<Movie>>
+    fun observeIsFavorite(movieId: Int): Flow<Boolean>
     suspend fun isFavorite(movieId: Int): Boolean
     suspend fun toggleFavorite(movie: Movie)
 }
-

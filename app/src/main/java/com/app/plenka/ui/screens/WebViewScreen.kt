@@ -42,10 +42,26 @@ fun WebViewScreen(
                         ViewGroup.LayoutParams.MATCH_PARENT,
                         ViewGroup.LayoutParams.MATCH_PARENT
                     )
-                    webViewClient = WebViewClient()
+                    webViewClient = object : WebViewClient() {
+                        override fun shouldOverrideUrlLoading(
+                            view: WebView?,
+                            request: android.webkit.WebResourceRequest?
+                        ): Boolean {
+                            val target = request?.url?.toString() ?: return false
+                            // Разрешаем только доверенные домены Кинопоиска и YouTube
+                            return if (target.contains("kinopoisk.ru") || target.contains("youtube.com") || target.contains("youtu.be")) {
+                                false // загрузить внутри WebView
+                            } else {
+                                true // заблокировать сторонние редиректы
+                            }
+                        }
+                    }
                     settings.javaScriptEnabled = true
                     settings.domStorageEnabled = true
-                    loadUrl(url)
+                    // Проверяем, что URL безопасный (http / https)
+                    if (url.startsWith("https://") || url.startsWith("http://")) {
+                        loadUrl(url)
+                    }
                 }
             },
             update = { webView ->

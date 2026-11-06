@@ -1,11 +1,11 @@
 package com.app.plenka.data.local
 
 import androidx.room.Dao
-import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.app.plenka.data.local.entity.MovieEntity
+import com.app.plenka.data.local.entity.FavoriteEntity
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -24,13 +24,16 @@ interface MovieDao {
     suspend fun clearAllCache()
 
     @Query("SELECT * FROM favorite_movies")
-    fun getFavoriteMovies(): Flow<List<com.app.plenka.data.local.entity.FavoriteEntity>>
+    fun getFavoriteMovies(): Flow<List<FavoriteEntity>>
 
     @Query("SELECT * FROM favorite_movies WHERE id = :movieId")
-    suspend fun getMovieById(movieId: Int): com.app.plenka.data.local.entity.FavoriteEntity?
+    suspend fun getMovieById(movieId: Int): FavoriteEntity?
+
+    @Query("SELECT * FROM favorite_movies WHERE id = :movieId")
+    fun observeMovieById(movieId: Int): Flow<FavoriteEntity?>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertFavorite(movie: com.app.plenka.data.local.entity.FavoriteEntity)
+    suspend fun insertFavorite(movie: FavoriteEntity)
 
     @Query("DELETE FROM favorite_movies WHERE id = :movieId")
     suspend fun removeFavorite(movieId: Int)
