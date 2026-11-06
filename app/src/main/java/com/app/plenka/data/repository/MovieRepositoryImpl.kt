@@ -74,15 +74,15 @@ class MovieRepositoryImpl @Inject constructor(
             } catch (_: Exception) {
                 null
             }
-            // Сначала пробуем найти KINOPOISK_WIDGET, если нет — берем YOUTUBE или любой другой
-            val videoItem = videosResponse?.items?.firstOrNull { 
+            val kpWidget = videosResponse?.items?.firstOrNull { 
                 it.site.equals("KINOPOISK_WIDGET", ignoreCase = true) && !it.url.isNullOrBlank()
-            } ?: videosResponse?.items?.firstOrNull { 
-                !it.url.isNullOrBlank()
-            }
-            val trailerUrl = videoItem?.url
+            }?.url
 
-            Result.success(dto.toDomain(trailerUrl = trailerUrl))
+            val youtubeVideo = videosResponse?.items?.firstOrNull { 
+                it.site.equals("YOUTUBE", ignoreCase = true) && !it.url.isNullOrBlank()
+            }?.url
+
+            Result.success(dto.toDomain(trailerUrl = kpWidget, youtubeTrailerUrl = youtubeVideo))
         } catch (e: kotlin.coroutines.cancellation.CancellationException) {
             throw e
         } catch (e: Exception) {
@@ -102,7 +102,8 @@ class MovieRepositoryImpl @Inject constructor(
                     shortDescription = null,
                     filmLength = null,
                     countries = emptyList(),
-                    trailerUrl = null
+                    trailerUrl = null,
+                    youtubeTrailerUrl = null
                 )
                 Result.success(details)
             } else {

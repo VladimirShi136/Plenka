@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
@@ -95,12 +96,11 @@ fun DetailScreen(
                     isFavorite = isFavorite,
                     onFavoriteClick = { viewModel.toggleFavorite() },
                     onTrailerClick = { url ->
-                        val targetUrl = if (!url.isNullOrBlank()) {
-                            url as String
-                        } else {
-                            val encoded = android.net.Uri.encode(state.movie.title + " трейлер")
-                            "https://www.youtube.com/results?search_query=$encoded"
-                        }
+                        val targetUrl = url ?: "https://www.youtube.com/results?search_query=${android.net.Uri.encode(state.movie.title + " трейлер")}"
+                        onOpenWebView(targetUrl, state.movie.title)
+                    },
+                    onYoutubeClick = { url ->
+                        val targetUrl = url ?: "https://www.youtube.com/results?search_query=${android.net.Uri.encode(state.movie.title + " трейлер")}"
                         onOpenWebView(targetUrl, state.movie.title)
                     }
                 )
@@ -139,7 +139,8 @@ private fun DetailContent(
     movie: MovieDetails,
     isFavorite: Boolean,
     onFavoriteClick: () -> Unit,
-    onTrailerClick: (String?) -> Unit
+    onTrailerClick: (String?) -> Unit,
+    onYoutubeClick: (String?) -> Unit
 ) {
     val colors = MaterialTheme.colorScheme
 
@@ -237,29 +238,64 @@ private fun DetailContent(
                 Spacer(modifier = Modifier.height(12.dp))
             }
 
-            // ---------- Кнопка трейлера ----------
-            androidx.compose.material3.Button(
-                onClick = { onTrailerClick(movie.trailerUrl) },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(50.dp),
-                shape = RoundedCornerShape(12.dp),
-                colors = androidx.compose.material3.ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFFFF8E00), // фирменный оранжевый Кинопоиска
-                    contentColor = Color.White
-                )
+            // ---------- Кнопки трейлеров ----------
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                Text(
-                    text = "Кинопоиск",
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.ExtraBold
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                Icon(
-                    painter = painterResource(R.drawable.ic_play),
-                    contentDescription = null,
-                    modifier = Modifier.size(18.dp)
-                )
+                // Кнопка Кинопоиск
+                androidx.compose.material3.Button(
+                    onClick = { onTrailerClick(movie.trailerUrl) },
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(46.dp),
+                    shape = RoundedCornerShape(12.dp),
+                    colors = androidx.compose.material3.ButtonDefaults.buttonColors(
+                        containerColor = Color(0xFFFF8E00),
+                        contentColor = Color.White
+                    ),
+                    contentPadding = PaddingValues(horizontal = 12.dp, vertical = 0.dp)
+                ) {
+                    Text(
+                        text = "Кинопоиск",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold,
+                        maxLines = 1
+                    )
+                    Spacer(modifier = Modifier.width(6.dp))
+                    Icon(
+                        painter = painterResource(R.drawable.ic_play),
+                        contentDescription = null,
+                        modifier = Modifier.size(16.dp)
+                    )
+                }
+
+                // Кнопка YouTube (красная)
+                androidx.compose.material3.Button(
+                    onClick = { onYoutubeClick(movie.youtubeTrailerUrl) },
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(46.dp),
+                    shape = RoundedCornerShape(12.dp),
+                    colors = androidx.compose.material3.ButtonDefaults.buttonColors(
+                        containerColor = Color(0xFFFF0000),
+                        contentColor = Color.White
+                    ),
+                    contentPadding = PaddingValues(horizontal = 12.dp, vertical = 0.dp)
+                ) {
+                    Text(
+                        text = "YouTube",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold,
+                        maxLines = 1
+                    )
+                    Spacer(modifier = Modifier.width(6.dp))
+                    Icon(
+                        painter = painterResource(R.drawable.ic_play),
+                        contentDescription = null,
+                        modifier = Modifier.size(16.dp)
+                    )
+                }
             }
             Spacer(modifier = Modifier.height(16.dp))
 
