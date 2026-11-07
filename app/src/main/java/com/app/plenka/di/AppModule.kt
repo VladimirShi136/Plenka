@@ -53,15 +53,19 @@ object AppModule {
     @Provides
     @Singleton
     fun providePlenkaDatabase(@ApplicationContext context: Context): PlenkaDatabase {
-        return Room.databaseBuilder(
+        val builder = Room.databaseBuilder(
             context,
             PlenkaDatabase::class.java,
             "plenka_database"
         )
             .addMigrations(com.app.plenka.data.local.MIGRATION_2_3)
-            // Запасной вариант на время разработки: при схеме без миграции база пересоздаётся (избранное теряется)
-            .fallbackToDestructiveMigration(true)
-            .build()
+        
+        // Разрушающая миграция только в debug-сборках для удобства разработки
+        if (com.app.plenka.BuildConfig.DEBUG) {
+            builder.fallbackToDestructiveMigration(true)
+        }
+        
+        return builder.build()
     }
 
     @Provides

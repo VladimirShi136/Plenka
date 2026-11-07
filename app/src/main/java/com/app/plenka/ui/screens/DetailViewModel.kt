@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import com.app.plenka.utils.toUserMessage
 import javax.inject.Inject
 
 sealed interface DetailUiState {
@@ -46,12 +47,7 @@ class DetailViewModel @Inject constructor(
                     _uiState.value = DetailUiState.Success(details)
                 },
                 onFailure = { error ->
-                    val errorMessage = if (error is java.net.UnknownHostException || error is java.io.IOException) {
-                        "Проверьте подключение к интернету"
-                    } else {
-                        error.localizedMessage ?: "Ошибка загрузки"
-                    }
-                    _uiState.value = DetailUiState.Error(errorMessage)
+                    _uiState.value = DetailUiState.Error(error.toUserMessage("Ошибка загрузки"))
                 }
             )
         }

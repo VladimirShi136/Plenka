@@ -8,6 +8,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import com.app.plenka.utils.toUserMessage
 import javax.inject.Inject
 
 sealed interface SearchUiState {
@@ -112,12 +113,7 @@ class SearchViewModel @Inject constructor(
                 )
             },
             onFailure = { error ->
-                val errorMessage = if (error is java.net.UnknownHostException || error is java.io.IOException) {
-                    "Проверьте подключение к интернету"
-                } else {
-                    error.localizedMessage ?: "Ошибка поиска"
-                }
-                _uiState.value = SearchUiState.Error(errorMessage)
+                _uiState.value = SearchUiState.Error(error.toUserMessage("Ошибка поиска"))
             }
         )
     }

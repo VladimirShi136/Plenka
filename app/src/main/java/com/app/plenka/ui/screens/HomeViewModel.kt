@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import com.app.plenka.utils.toUserMessage
 import javax.inject.Inject
 
 sealed interface HomeUiState {
@@ -57,12 +58,7 @@ class HomeViewModel @Inject constructor(
                     )
                 },
                 onFailure = { error ->
-                    val errorMessage = if (error is java.net.UnknownHostException || error is java.io.IOException) {
-                        "Проверьте подключение к интернету"
-                    } else {
-                        error.localizedMessage ?: "Неизвестная ошибка"
-                    }
-                    _uiState.value = HomeUiState.Error(errorMessage)
+                    _uiState.value = HomeUiState.Error(error.toUserMessage("Неизвестная ошибка"))
                 }
             )
         }
