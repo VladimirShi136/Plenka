@@ -33,3 +33,6 @@ local.properties
 
 # Temporary and artifact files
 .artifacts/
+
+# Doc
+ROADMAP.md
